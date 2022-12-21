@@ -1,0 +1,192 @@
+---
+title: "Assignment Assignment: Module 8 - DEA"
+author: "Karthik Badiganti"
+date: "2022-10-27"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Loading Packages
+
+```{r packages}
+library(Benchmarking)
+```
+
+## Given data
+
+```{r Data}
+tab <- matrix(c("Facility 1","Facility 2","Facility 3","Facility 4","Facility 5","Facility 6",
+                150,400,320,520,350,320,
+                 0.2,0.7,1.2,2.0,1.2,0.7,
+                 14000,14000,42000,28000,19000,14000,
+                 3500,21000,10500,42000,25000,15000), ncol=5, byrow=F)
+colnames(tab) <- c('DMU','Staff.Hours.per.day', 'Supplies.per.day','Reimbursed.patient.days','Privately.paid.patient.days')
+#rownames(tab) <- c("Facility 1","Facility 2","Facility 3","Facility 4","Facility 5","Facility 6")
+tab <- as.data.frame(tab)
+
+x<-matrix(c(150,400,320,520,350,320,
+            0.2,0.7,1.2,2,1.2,0.7),ncol=2)
+y<-matrix(c(14000,14000,42000,28000,19000,14000,
+            3500,21000,10500,42000,25000,15000),ncol=2)
+colnames(y)<-c("Reimbursed","Private")
+colnames(x)<-c("Staff","Supplies")
+rownames(x)<-c("Facility 1","Facility 2","Facility 3","Facility 4","Facility 5","Facility 6")
+tab
+```
+
+## Question 1
+
+```{r q1}
+
+
+crs<-dea(x,y,RTS='crs')
+tab$crs.efficiency<-crs$eff
+
+
+vrs<-dea(x,y,RTS='vrs')
+tab$vrs.efficiency<-vrs$eff
+
+
+irs<-dea(x,y,RTS='irs')
+tab$irs.efficiency<-irs$eff
+
+
+drs<-dea(x,y,RTS='drs')
+tab$drs.efficiency<-drs$eff
+
+
+fdh<-dea(x,y,RTS='fdh')
+tab$fdh.efficiency<-fdh$eff
+
+
+frh<-dea(x,y,RTS='fdh+')
+tab$frh.efficiency<-frh$eff
+
+
+tab
+
+```
+
+## Question 2 Peers and Lamba
+
+```{r peers and lamba}
+
+crs1<-c()
+crs1$efficiency<-crs$eff
+crs1$peers<-peers(crs)
+crs1$lambda<-lambda(crs)
+
+crs1<- as.data.frame(crs1)
+rownames(crs1)<-c("Facility 1","Facility 2","Facility 3","Facility 4","Facility 5","Facility 6")
+
+vrs1<-c()
+vrs1$efficiency<-vrs$eff
+vrs1$peers<-peers(vrs)
+vrs1$lambda<-lambda(vrs)
+
+vrs1<- as.data.frame(vrs1)
+rownames(vrs1)<-c("Facility 1","Facility 2","Facility 3","Facility 4","Facility 5","Facility 6")
+
+drs1<-c()
+drs1$efficiency<-drs$eff
+drs1$peers<-peers(drs)
+drs1$lambda<-lambda(drs)
+
+drs1<- as.data.frame(drs1)
+rownames(drs1)<-c("Facility 1","Facility 2","Facility 3","Facility 4","Facility 5","Facility 6")
+
+irs1<-c()
+irs1$efficiency<-irs$eff
+irs1$peers<-peers(irs)
+irs1$lambda<-lambda(irs)
+
+irs1<- as.data.frame(irs1)
+rownames(irs1)<-c("Facility 1","Facility 2","Facility 3","Facility 4","Facility 5","Facility 6")
+
+fdh1<-c()
+fdh1$efficiency<-fdh$eff
+fdh1$peers<-peers(fdh)
+fdh1$lambda<-lambda(fdh)
+
+fdh1<- as.data.frame(fdh1)
+rownames(fdh1)<-c("Facility 1","Facility 2","Facility 3","Facility 4","Facility 5","Facility 6")
+
+frh1<-c()
+frh1$efficiency<-frh$eff
+frh1$peers<-peers(frh)
+frh1$lambda<-lambda(frh)
+
+frh1<- as.data.frame(frh1)
+rownames(frh1)<-c("Facility 1","Facility 2","Facility 3","Facility 4","Facility 5","Facility 6")
+```
+
+## Question 3 Summarize
+
+### CRS
+
+```{r crs}
+crs1
+dea.plot(x,y,RTS="crs",ORIENTATION="in-out",txt=rownames(x), main="crs",lty="dashed",lwd=4, col="blue",xlim=c(0,700))
+```
+
+### DRS
+
+```{r drs}
+drs1
+dea.plot(x,y,RTS="drs",ORIENTATION="in-out",txt=rownames(x),main="drs",lty="dashed",lwd=2,col='green',xlim=c(0,700))
+```
+
+### VRS
+
+```{r vrs}
+vrs1
+dea.plot(x,y,RTS="vrs",ORIENTATION="in-out",txt=rownames(x),main='vrs',col='red',xlim=c(0,700))
+```
+
+### IRS
+
+```{r irs}
+irs1
+dea.plot(x,y,RTS="irs",ORIENTATION="in-out",txt=rownames(x),main="irs",lty="dotted",lwd=3,col='yellow',xlim=c(0,700))
+```
+
+### FDH
+
+```{r fdh}
+fdh1
+dea.plot(x,y,RTS="fdh",ORIENTATION="in-out",txt=rownames(x),main="fdh",xlim=c(0,700))
+```
+
+### FRH
+
+```{r frh}
+frh1
+dea.plot(x,y,RTS="fdh+",ORIENTATION="in-out",txt=rownames(x),lty="dotted",main="frh",param=.5,xlim=c(0,700))
+```
+
+## plots
+
+```{r plots}
+
+dea.plot(x,y,RTS="vrs",ORIENTATION="in-out",txt=rownames(x),main='vrs',col='red',xlim=c(0,700))
+dea.plot(x,y,RTS="drs",ORIENTATION="in-out",add=TRUE,lty="dashed",lwd=2,col='green',xlim=c(0,700))
+dea.plot(x,y,RTS="irs",ORIENTATION="in-out",add=TRUE,lty="dotted",lwd=3,col='yellow',xlim=c(0,700))
+dea.plot(x,y,RTS="crs",ORIENTATION="in-out",add=TRUE,lty="dashed",lwd=4, col="blue",xlim=c(0,700))
+
+
+dea.plot(x,y,RTS="fdh",ORIENTATION="in-out",txt=rownames(x),main="fdh,frh",xlim=c(0,700))
+dea.plot(x,y,RTS="fdh+",ORIENTATION="in-out",add=TRUE,lty="dotted",param=.5,xlim=c(0,700))
+```
+
+## Question 4 Obeservations and results
+
+1. In CRS, we can observe that facilities 1,2,3,4 have highest efficiency of 1. hence they don't have any peers other than itself and also we can observe distances in the lambda columns.
+2. In DRS, we can observe that facilities 1,2,3,4 have highest efficiency similar to crs. hence we can observe same values of peers and lamba as same.
+3. In VRS, we can observe that facilities 1,2,3,4,5 have highest efficiency. there is only one facility with less than 1, hence it has a peer which is facility 1,2,5 with lamba 1.
+4. In IRS, we can observe that similar to vrs facilities 1,2,3,4,5 have highest efficiency.
+5. In FDH and FRH, we can observe same efficiency lambda and peer values.
+
+In conclusion, we can see that there are similar values observed in different RTS, the plots and tracing for each one varies as shown above. In general, if not specified we usually use CRS as RTS method for calculation of efficiency.
