@@ -1,0 +1,50 @@
+---
+title: "Goal Programming"
+author: "Karthik Badiganti"
+date: "2022-11-06"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Given Equation
+
+```{r given table}
+library(lpSolveAPI)
+
+gp_table <- matrix(c("Total Profit", "Employment Level", "Earnings Next Year",
+20,6,8,
+15,4,7,
+25,5,5,
+"Maximize","=50",">=75", "Millions of Dollars", "Hundreds of Employees", "Millions of Dollars"), ncol=6)
+colnames(gp_table) <- c("Factor","Product 1", "Product 2", "Product 3", "Goal", "Units")
+print(gp_table)
+```
+
+## Formulating Goal programming equation
+
+```{r goal programming}
+
+gp <- read.lp("goal.lp")
+gp
+```
+
+## Solving GP
+
+```{r}
+solve(gp)
+
+get.objective(gp)
+get.variables(gp)
+
+```
+
+1.  **Interpretation:** After applying simplex method we get x1=0, x2=0, x3=15 , y1p=25, y1m=0, y2m=0, y2p=0
+
+2.  From the above we can interpret that product 3 can be optimized by increasing 15 units which maximizes profit.
+
+3.  since y2m=0, the goal for earnings has been achieved. But the employment goal has been exceeded by 25(2500 employees) in order to maximize the objective function.
+
+4.  The maximized objective of the company is 225
