@@ -1,0 +1,102 @@
+---
+title: "QMM FINAL PROJECT"
+author: "Group 1"
+date: "2022-12-09"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Random data Creation
+
+```{r data}
+library(randomNames)
+set.seed(12345)
+GPA <- sample(1:4, 12,replace = TRUE)
+
+
+Experience<-sample(0:6, 12,replace = TRUE)
+
+Presentation_skills<-sample(1:10, 12,replace = TRUE)
+Students<-c(1,2,3,4,5,6,7,8,9,10,11,12)
+```
+
+Here success of student is assumed to be **success=(0.5\*GPA+0.3\*Experience+0.2\*Presentation_skills)**
+
+## Created Data
+
+```{r given data}
+set.seed(12345)
+student_data<-data.frame(Students,GPA,Experience,Presentation_skills)
+
+student_data$success<-with(student_data,0.5*GPA+0.3*Experience+0.2*Presentation_skills)
+
+student_data
+```
+
+**Constraints and Assumptions used:**
+
+-   Since we need 4 groups with equal success, our objective is to maximize one group success and apply a constraint where all groups success ratio is equal.
+
+-   Each group can have only 3 members.
+
+-   Total GPA of group should be atleast 5
+
+-   Total Experience of group should be atleast 5
+
+-   Total Skill rating of group should be atleast 11
+
+-   Assuming all decision variables are binary
+
+## Importing LP File
+
+```{r lp import}
+
+library(lpSolveAPI)
+y <-read.lp("GA_DATA.lp")
+print(y)
+
+```
+
+**We can see that there are 48 decision variables with 31 constraints in the LP model**
+
+**Decision Variables= X~ij~ **
+
+**where i= 1,2,3,4 Groups**
+
+**j=1,2,3,4,5,6,7,8,9,10,11,12 Students**
+
+## Solving LP
+
+```{r lpsolving}
+set.seed(2345)
+solve(y)
+
+Assignment <- get.variables(y)
+```
+
+## Output after solving LP
+
+```{r}
+# Objective maximisation
+get.objective(y)
+
+# Constraints
+get.constraints(y)
+
+#decision variables
+a<-matrix(Assignment,nrow=12,byrow=F)
+colnames(a)<-c('Group 1','Group 2','Group 3','Group 4')
+rownames(a)<-student_data$Students
+a
+```
+
+-   **Group1 students - 4,7,12**
+
+-   **Group2 Students - 2,3,9**
+
+-   **Group3 Students - 5,8,10**
+
+-   **Group4 Students - 1,6,11**
